@@ -20,7 +20,7 @@ function critical(message){
     Error.captureStackTrace(error_info, critical);
     params.Message = `${message} \n(stack:${error_info.stack})`;
     console.error(`${params.Subject} ${params.Message}`);
-    sns.publish(params, function(err){
+    SNS.publish(params, function(err){
         if(err) console.error("SNS send failed", err);
     })
 }
