@@ -9,7 +9,7 @@ require('pkginfo')(app_module);
 var Configured_Options = null;
 var SNS = null;
 
-function critical(message){
+function critical(message_or_error){
     if(!Configured_Options){
         console.error(new Error("critical() not configured yet!"), message);
         return;
@@ -17,8 +17,12 @@ function critical(message){
 
     var params = Object.assign({}, Configured_Options);
     var error_info = {};
-    Error.captureStackTrace(error_info, critical);
-    params.Message = `${message} \n(stack:${error_info.stack})`;
+    if(message_or_error.stack){
+        error_info = message_or_error;
+    }else{
+        Error.captureStackTrace(error_info, critical);
+    }
+    params.Message = `${message_or_error} \n(stack:${error_info.stack})`;
     console.error(`${params.Subject} ${params.Message}`);
     SNS.publish(params, function(err){
         if(err) console.error("SNS send failed", err);
