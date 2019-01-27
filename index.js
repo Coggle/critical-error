@@ -11,7 +11,7 @@ var SNS = null;
 
 function critical(message_or_error){
     if(!Configured_Options){
-        console.error(new Error("critical() not configured yet!"), message);
+        console.error(new Error("critical() not configured yet!"), message_or_error);
         return;
     }
 
