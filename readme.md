@@ -37,7 +37,7 @@ await critical.waitForCompletion();
 ## Changelog
 
 ### 1.2.0
- * add .wait
+ * add .waitForCompletion()
 
 ### 1.1.0
  * Updated to use aws-sdk v3, depending only on @aws-sdk/client-sns instead of the whole sdk
