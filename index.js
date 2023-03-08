@@ -29,12 +29,32 @@ const app_package = findPackageJson(module) || {};
 let Configured_Options = null;
 let SNS = null;
 
+let inFlight = 0;
+let waitingCallbacks = [];
+const sendMessage = async function(params){
+    try {
+        inFlight += 1;
+        await SNS.send(new PublishCommand(params));
+    } catch (err) {
+        console.error("SNS send failed", err);
+    } finally {
+        inFlight -= 1;
+        // NOTE: we deliberately do not check if inFlight has reached 0 here.
+        // If there was an error logging the error we could easily end in a
+        // loop
+        const waiting = waitingCallbacks;
+        waitingCallbacks = [];
+        for (const cb of waiting) {
+            cb();
+        }
+    }
+}
+
 function critical(message_or_error){
     if(!Configured_Options){
         console.error(new Error("critical() not configured yet!"), message_or_error);
         return;
     }
-
     const params = Object.assign({}, Configured_Options);
     let error_info = {};
     if(message_or_error.stack){
@@ -44,10 +64,7 @@ function critical(message_or_error){
     }
     params.Message = `${message_or_error} \n(stack:${error_info.stack})`;
     console.error(`${params.Subject} ${params.Message}`);
-
-    SNS.send(new PublishCommand(params)).catch(err => {
-        console.error("SNS send failed", err);
-    });
+    sendMessage(params);
 }
 
 critical.configure = function(options){
@@ -67,6 +84,19 @@ critical.configure = function(options){
         Configured_Options.Subject ||
         `Error on ${hostname()} ${process.env.NODE_ENV} in ${app_package.name} ${app_package.version}`;
 };
+
+critical.waitForCompletion = function(cb) {
+    if (!cb) {
+        return new Promise(resolve => {
+            waitForCompletion(resolve);
+        });
+    }
+    if (inFlight === 0) {
+        cb();
+    }else {
+        waitingCallbacks.push(cb);
+    }
+}
 
 
 process.on('uncaughtException', function(err){
