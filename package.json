@@ -1,6 +1,6 @@
 {
   "name": "critical-error",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A simple interface to send error messages to an SNS topic.",
   "main": "index.js",
   "engines": {
