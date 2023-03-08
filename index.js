@@ -1,10 +1,30 @@
 const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 const { hostname } = require("os");
+const { join, dirname } = require("path");
+const { existsSync } = require('fs');
 
-const app_module = (function getParent(m){
-    return (m.parent && getParent(m.parent)) || m;
-})(module);
-require('pkginfo')(app_module);
+// search upwards and get the top-level package.json we can find:
+function findPackageJson(mod) {
+    if (!mod) return null;
+    const foundInParent = findPackageJson(mod.parent);
+    if (foundInParent) {
+        return foundInParent;
+    } else {
+        const f = join(dirname(mod.filename), 'package.json');
+        if (existsSync(f)) {
+            let r = {};
+            try {
+                r = require(f);
+            } catch (e) {
+                console.error(`${f} not readable: no app information available for critical-error`);
+            }
+            return r;
+        } else {
+            return null;
+        }
+    }
+}
+const app_package = findPackageJson(module) || {};
 
 let Configured_Options = null;
 let SNS = null;
@@ -45,7 +65,7 @@ critical.configure = function(options){
 
     Configured_Options.Subject =
         Configured_Options.Subject ||
-        `Error on ${hostname()} ${process.env.NODE_ENV} in ${app_module.exports.name} ${app_module.exports.version}`;
+        `Error on ${hostname()} ${process.env.NODE_ENV} in ${app_package.name} ${app_package.version}`;
 };
 
 

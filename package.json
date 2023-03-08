@@ -12,7 +12,6 @@
   "author": "James Crosby <james@coggle.it>",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-sns": "^3.282.0",
-    "pkginfo": "^0.4.1"
+    "@aws-sdk/client-sns": "^3.282.0"
   }
 }
