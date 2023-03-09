@@ -85,7 +85,7 @@ critical.configure = function(options){
         `Error on ${hostname()} ${process.env.NODE_ENV} in ${app_package.name} ${app_package.version}`;
 };
 
-critical.waitForCompletion = function(cb) {
+critical.waitForCompletion = function waitForCompletion(cb) {
     if (!cb) {
         return new Promise(resolve => {
             waitForCompletion(resolve);
