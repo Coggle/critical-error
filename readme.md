@@ -1,10 +1,18 @@
 # critical-error
+
+[![NPM Version](https://img.shields.io/npm/v/critical-error)](https://www.npmjs.com/package/critical-error)
+
 Provides a simple interface to send messages to a pre-configured SNS endpoint,
 using @aws-sdk/client-sns.
 
 All messages are also logged to `console.error`.
 
 A process `uncaughtException` handler is also installed which logs uncaught exceptions.
+
+## Install
+```
+npm i critical-error
+```
 
 ## Usage
 ```
@@ -36,7 +44,7 @@ await critical.waitForCompletion();
 
 ## Changelog
 
-### 1.3.1
+### 1.3.1
  * fixed respository URL in package.json for provenance
 
 ### 1.3.0
