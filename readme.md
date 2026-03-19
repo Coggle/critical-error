@@ -36,6 +36,9 @@ await critical.waitForCompletion();
 
 ## Changelog
 
+### 1.3.0
+ * updated AWS SDK version, add provenance-attested publish from github action
+
 ### 1.2.0
  * add .waitForCompletion()
 
