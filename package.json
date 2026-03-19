@@ -20,6 +20,6 @@
   "author": "James Crosby <james@coggle.it>",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-sns": "^3.282.0"
+    "@aws-sdk/client-sns": "^3.1012.0"
   }
 }
