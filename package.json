@@ -5,7 +5,8 @@
   "main": "index.js",
   "files": [
     "index.js",
-    "readme.md"
+    "readme.md",
+    "index.d.ts"
   ],
   "engines": {
     "node": ">=12"
