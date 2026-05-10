@@ -44,6 +44,11 @@ await critical.waitForCompletion();
 
 ## Changelog
 
+### 2.0.0
+ * Application name and version information is now read from process.cwd()/package.json
+   (instead of traversing the module tree), to fix ES6 import.
+ * Added types.
+
 ### 1.3.1
  * fixed respository URL in package.json for provenance
 
