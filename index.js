@@ -1,28 +1,20 @@
 const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 const { hostname } = require("os");
 const { join, dirname } = require("path");
-const { existsSync } = require('fs');
+const { existsSync, readFileSync } = require('fs');
 
 // search upwards and get the top-level package.json we can find:
 function findPackageJson(mod) {
-    if (!mod) return null;
-    const foundInParent = findPackageJson(mod.parent);
-    if (foundInParent) {
-        return foundInParent;
-    } else {
-        const f = join(dirname(mod.filename), 'package.json');
-        if (existsSync(f)) {
-            let r = {};
-            try {
-                r = require(f);
-            } catch (e) {
-                console.error(`${f} not readable: no app information available for critical-error`);
-            }
-            return r;
-        } else {
-            return null;
+    const f = join(process.cwd(), 'package.json');
+    let r = {};
+    if (existsSync(f)) {
+        try {
+            r = JSON.parse(readFileSync(f, 'utf8'));
+        } catch (e) {
+            console.error(`${f} not readable: no app information available for critical-error`, e);
         }
     }
+    return r;
 }
 const app_package = findPackageJson(module) || {};
 
@@ -109,3 +101,4 @@ process.on('uncaughtException', function(err){
 });
 
 module.exports = critical
+
