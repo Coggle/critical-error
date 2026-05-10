@@ -1,22 +1,22 @@
 const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 const { hostname } = require("os");
-const { join, dirname } = require("path");
-const { existsSync, readFileSync } = require('fs');
+const { join } = require("path");
+const { existsSync, readFileSync } = require("fs");
 
 // search upwards and get the top-level package.json we can find:
-function findPackageJson(mod) {
-    const f = join(process.cwd(), 'package.json');
+function findPackageJson() {
+    const f = join(process.cwd(), "package.json");
     let r = {};
     if (existsSync(f)) {
         try {
-            r = JSON.parse(readFileSync(f, 'utf8'));
+            r = JSON.parse(readFileSync(f, "utf8"));
         } catch (e) {
             console.error(`${f} not readable: no app information available for critical-error`, e);
         }
     }
     return r;
 }
-const app_package = findPackageJson(module) || {};
+const app_package = findPackageJson() || {};
 
 let Configured_Options = null;
 let SNS = null;
@@ -40,7 +40,7 @@ const sendMessage = async function(params){
             cb();
         }
     }
-}
+};
 
 function critical(message_or_error){
     if(!Configured_Options){
@@ -64,7 +64,7 @@ critical.configure = function(options){
         console.error(new Error("critical() configuration overwritten"));
     }
     Configured_Options = Object.assign({}, options);
-    
+
     // the region option is used when constructing SNS, the others when
     // publishing
     const region = Configured_Options.region;
@@ -88,10 +88,10 @@ critical.waitForCompletion = function waitForCompletion(cb) {
     }else {
         waitingCallbacks.push(cb);
     }
-}
+};
 
 
-process.on('uncaughtException', function(err){
+process.on("uncaughtException", function(err){
     try{
         critical(err);
     }catch(e){
@@ -100,5 +100,5 @@ process.on('uncaughtException', function(err){
     }
 });
 
-module.exports = critical
+module.exports = critical;
 
